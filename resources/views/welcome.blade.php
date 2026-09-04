@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido - API Finanzas</title>
-    <!-- Tailwind CSS desde CDN para estilos rápidos -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +12,6 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
 
-    <!-- Header / Navbar -->
     <header class="w-full max-w-7xl mx-auto p-6 flex justify-between items-center">
         <div class="flex items-center space-x-3">
             <div class="bg-indigo-600 p-2 rounded-lg">
@@ -28,7 +26,7 @@
         </span>
     </header>
 
-    <!-- Contenido Principal -->
+
     <main class="w-full max-w-4xl mx-auto px-6 text-center my-auto">
         <div class="inline-block mb-4 px-4 py-1.5 bg-emerald-500/10 text-emerald-400 text-sm font-semibold rounded-full border border-emerald-500/20">
             ● Sistema Online y Conectado
@@ -39,7 +37,7 @@
         </h1>
 
         <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Gestión inteligente de ingresos, egresos y control presupuestario ejecutándose en tu servidor local.
+            Gestión inteligente de ingresos, egresos y control presupuestario 
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-3xl mx-auto mb-10">
@@ -54,16 +52,8 @@
             </div>
         </div>
 
-        <!-- Botón de acción -->
-        <a href="/api/finanzas" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30">
-            <span>Explorar API</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-            </svg>
-        </a>
     </main>
 
-    <!-- Footer -->
     <footer class="w-full text-center p-6 text-slate-500 text-sm">
         Desarrollado por Alonso Vasquez en su homelab
     </footer>
