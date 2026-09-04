@@ -55,8 +55,7 @@
     </main>
 
     <footer class="w-full text-center p-6 text-slate-500 text-sm">
-        Desarrollado por Alonso Vasquez en su homelab
-    </footer>
+        Desarrollado por Alonso Vasquez
 
 </body>
 </html>
