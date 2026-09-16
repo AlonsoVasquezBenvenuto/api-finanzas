@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('api_finanzas', function (Blueprint $table) {
-            $table->id();
+        Schema::create('rol', function (Blueprint $table) {
+            $table->id('rol_id');
+            $table->string('nombre', 100)->unique();
+            $table->string('description')->notnull();
             $table->timestamps();
+            $table->timestamp('read_at')->nullable();
+            $table->softDeletes();
         });
     }
 
@@ -22,7 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('api_finanzas');
+        Schema::dropIfExists('rol');
     }
 };
-
