@@ -1,65 +1,76 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\usuario;
+use App\Models\Usuario;
+use App\Models\Rol;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            return DataTables::eloquent(Usuario::query())->toJson();
+        }
+        return view('usuarios.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $roles = Rol::all();
+        return view('usuarios.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'rol_id' => 'required|exists:rol,rol_id',
+            'nombre' => 'required|string|max:150',
+            'email' => 'required|email|unique:usuarios,email',
+            'password' => 'required|string|min:8',
+            'estado' => 'required|string|max:20',
+        ]);
+
+        $data = $request->all();
+        $data['password'] = Hash::make($request->password);
+
+        Usuario::create($data);
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario creado.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(usuario $usuario)
+    public function edit(Usuario $usuario)
     {
-        //
+        $roles = Rol::all();
+        return view('usuarios.edit', compact('usuario', 'roles'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(usuario $usuario)
+    public function update(Request $request, Usuario $usuario)
     {
-        //
+        $request->validate([
+            'rol_id' => 'required|exists:rol,rol_id',
+            'nombre' => 'required|string|max:150',
+            'email' => 'required|email|unique:usuarios,email,' . $usuario->id_usuario . ',id_usuario',
+            'estado' => 'required|string|max:20',
+        ]);
+
+        $data = $request->all();
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        } else {
+            unset($data['password']); // No actualizar si está vacío
+        }
+
+        $usuario->update($data);
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, usuario $usuario)
+    public function destroy(Usuario $usuario)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(usuario $usuario)
-    {
-        //
+        $usuario->delete();
+        return response()->json(['success' => 'Usuario eliminado.']);
     }
 }

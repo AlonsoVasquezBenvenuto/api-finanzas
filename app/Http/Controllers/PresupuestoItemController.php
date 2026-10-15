@@ -1,65 +1,63 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\presupuesto_item;
+use App\Models\PresupuestoItem;
+use App\Models\Presupuesto;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class PresupuestoItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            return DataTables::eloquent(PresupuestoItem::query())->toJson();
+        }
+        return view('presupuesto-items.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $presupuestos = Presupuesto::all();
+        $categorias = Categoria::all();
+        return view('presupuesto-items.create', compact('presupuestos', 'categorias'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'id_presupuesto' => 'required|exists:presupuestos,id_presupuesto',
+            'id_categoria' => 'required|exists:categorias,id_categoria',
+            'monto_asignado' => 'required|numeric',
+            'monto_ejecutado' => 'required|numeric',
+        ]);
+        PresupuestoItem::create($request->all());
+        return redirect()->route('presupuesto-items.index')->with('success', 'Ítem creado.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(presupuesto_item $presupuesto_item)
+    public function edit(PresupuestoItem $presupuestoItem)
     {
-        //
+        $presupuestos = Presupuesto::all();
+        $categorias = Categoria::all();
+        return view('presupuesto-items.edit', compact('presupuestoItem', 'presupuestos', 'categorias'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(presupuesto_item $presupuesto_item)
+    public function update(Request $request, PresupuestoItem $presupuestoItem)
     {
-        //
+        $request->validate([
+            'id_presupuesto' => 'required|exists:presupuestos,id_presupuesto',
+            'id_categoria' => 'required|exists:categorias,id_categoria',
+            'monto_asignado' => 'required|numeric',
+            'monto_ejecutado' => 'required|numeric',
+        ]);
+        $presupuestoItem->update($request->all());
+        return redirect()->route('presupuesto-items.index')->with('success', 'Ítem actualizado.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, presupuesto_item $presupuesto_item)
+    public function destroy(PresupuestoItem $presupuestoItem)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(presupuesto_item $presupuesto_item)
-    {
-        //
+        $presupuestoItem->delete();
+        return response()->json(['success' => 'Ítem eliminado.']);
     }
 }

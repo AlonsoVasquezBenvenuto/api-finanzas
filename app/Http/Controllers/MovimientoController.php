@@ -1,65 +1,85 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\movimiento;
+use App\Models\Movimiento;
+use App\Models\Cuenta;
+use App\Models\Usuario;
+use App\Models\Categoria;
+use App\Models\Presupuesto;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class MovimientoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            return DataTables::eloquent(Movimiento::query())->toJson();
+        }
+        return view('movimientos.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $usuarios = Usuario::all();
+        $cuentas = Cuenta::all();
+        $categorias = Categoria::all();
+        $presupuestos = Presupuesto::all();
+        return view('movimientos.create', compact('usuarios', 'cuentas', 'categorias', 'presupuestos'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'id_usuario' => 'required|exists:usuarios,id_usuario',
+            'id_cuenta' => 'required|exists:cuentas,id_cuenta',
+            'tipo' => 'required|string|max:20',
+            'monto' => 'required|numeric|min:0.01',
+            'fecha' => 'required|date',
+            'estado' => 'required|string|max:20',
+            'visibilidad' => 'required|string|max:20',
+        ]);
+
+        // Regla de negocio: Validar saldo si es EGRESO
+        if ($request->tipo === 'EGRESO') {
+            $cuenta = Cuenta::find($request->id_cuenta);
+            if ($cuenta->saldo_actual < $request->monto) {
+                return back()->withErrors(['monto' => 'Saldo insuficiente en la cuenta.'])->withInput();
+            }
+        }
+
+        Movimiento::create($request->all());
+        return redirect()->route('movimientos.index')->with('success', 'Movimiento registrado.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(movimiento $movimiento)
+    public function edit(Movimiento $movimiento)
     {
-        //
+        $usuarios = Usuario::all();
+        $cuentas = Cuenta::all();
+        $categorias = Categoria::all();
+        $presupuestos = Presupuesto::all();
+        return view('movimientos.edit', compact('movimiento', 'usuarios', 'cuentas', 'categorias', 'presupuestos'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(movimiento $movimiento)
+    public function update(Request $request, Movimiento $movimiento)
     {
-        //
+        $request->validate([
+            'id_usuario' => 'required|exists:usuarios,id_usuario',
+            'id_cuenta' => 'required|exists:cuentas,id_cuenta',
+            'tipo' => 'required|string|max:20',
+            'monto' => 'required|numeric|min:0.01',
+            'fecha' => 'required|date',
+            'estado' => 'required|string|max:20',
+            'visibilidad' => 'required|string|max:20',
+        ]);
+        
+        $movimiento->update($request->all());
+        return redirect()->route('movimientos.index')->with('success', 'Movimiento actualizado.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, movimiento $movimiento)
+    public function destroy(Movimiento $movimiento)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(movimiento $movimiento)
-    {
-        //
+        $movimiento->delete();
+        return response()->json(['success' => 'Movimiento eliminado.']);
     }
 }

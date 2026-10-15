@@ -2,64 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\categoria;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar categorías (Vista y DataTables)
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            return DataTables::eloquent(Categoria::query())->toJson();
+        }
+        return view('categorias.index');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Mostrar formulario de creación
      */
     public function create()
     {
-        //
+        return view('categorias.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guardar nueva categoría
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:150',
+            'tipo' => 'required|string|max:20',
+            'visibilidad' => 'required|string|max:20',
+        ]);
+
+        Categoria::create($request->all());
+
+        return redirect()->route('categorias.index')
+            ->with('success', 'Categoría creada exitosamente.');
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar formulario de edición
      */
-    public function show(categoria $categoria)
+    public function edit(Categoria $categoria)
     {
-        //
+        return view('categorias.edit', compact('categoria'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Actualizar categoría
      */
-    public function edit(categoria $categoria)
+    public function update(Request $request, Categoria $categoria)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:150',
+            'tipo' => 'required|string|max:20',
+            'visibilidad' => 'required|string|max:20',
+        ]);
+
+        $categoria->update($request->all());
+
+        return redirect()->route('categorias.index')
+            ->with('success', 'Categoría actualizada exitosamente.');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Eliminar categoría (Soft Delete)
      */
-    public function update(Request $request, categoria $categoria)
+    public function destroy(Categoria $categoria)
     {
-        //
-    }
+        $categoria->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(categoria $categoria)
-    {
-        //
+        return response()->json([
+            'success' => 'Categoría eliminada exitosamente.'
+        ]);
     }
 }
