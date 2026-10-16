@@ -12,6 +12,6 @@ class HistorialController extends Controller
         if ($request->ajax()) {
             return DataTables::eloquent(Historial::query())->toJson();
         }
-        return view('Historiales.index');
+        return view('historiales.index');
     }
 }
