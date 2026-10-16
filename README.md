@@ -56,3 +56,6 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+Para acceder a la pagina usar php artisian serve, luego acceder https://reel-means-employees-reservoir.trycloudflare.com
