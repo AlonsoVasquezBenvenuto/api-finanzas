@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 
 Route::resource('categorias', CategoriaController::class)->except(['show']);
-Route::resource('roles', RolController::class)->except(['show']);
+Route::resource('roles', RolController::class)  ->parameters(['roles' => 'rol']) ->except(['show']);
 Route::resource('usuarios', UsuarioController::class)->except(['show']);
 Route::resource('cuentas', CuentaController::class)->except(['show']);
 Route::resource('presupuestos', PresupuestoController::class)->except(['show']);
